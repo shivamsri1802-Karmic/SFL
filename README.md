@@ -1,62 +1,75 @@
-# SFL (Save & Find Location) — Reconstructed Android Studio Project
+# SFL — Save Favorite Location
 
-This project was reconstructed by decompiling `SFL.apk` (package `com.shivam.sfl`)
-with **jadx**. It's meant as a starting point for inspecting or continuing work
-on the app — please read the caveats below before you build or ship it.
+SFL is an Android app for saving and organizing the places that matter to you —
+not just search results, but a personal map of spots worth remembering: a
+friend's house, a favorite café, the good parking spot, a place from a trip
+you want to find again.
 
-## What's here
-- `app/src/main/java/com/shivam/sfl/` — the app's own 9 source files
-  (decompiled from `classes.dex`/`classes2.dex`). `R.java` and `BuildConfig.java`
-  were removed since Gradle regenerates those automatically.
-- `app/src/main/res/` — resources recovered from the compiled `resources.arsc`.
-- `app/src/main/AndroidManifest.xml` — cleaned up (removed build-injected
-  entries like `appComponentFactory` and the merged-in `GoogleApiActivity`,
-  which Gradle/manifest-merger will re-add automatically from the Play
-  Services dependency).
-- `build.gradle` / `settings.gradle` — dependencies inferred from the actual
-  `import` statements in the source (AndroidX AppCompat/RecyclerView/Material,
-  Play Services Maps + Location, and the `ShowcaseView` tutorial-highlight
-  library via JitPack).
+It's built around a simple idea: saving a place should take one tap, and
+finding it again later should be just as fast.
 
-## Important caveats (please read)
+## Features
 
-1. **Decompiled code, not original source.** jadx reconstructs readable
-   Java from bytecode, but variable/class names surviving obfuscation,
-   exact original formatting, and comments are gone. Logic should be
-   equivalent, but treat this as a reverse-engineered approximation.
+**Capture**
+- Map-centric home screen — see all your saved places at a glance, with Home
+  and Work highlighted in their own colors
+- One-tap save from your current location, with a draggable pin to fine-tune
+  the exact spot before confirming
+- A home-screen widget for capturing a location without opening the app
+- Plus Code support alongside the street address, for places with no clean
+  postal address
 
-2. **Resources are merged, not split by library.** A compiled APK's
-   `resources.arsc` bakes every dependency's resources (AppCompat's `abc_*`
-   layouts, Material's `mtrl_*`/`design_*` files, etc.) into one table
-   alongside the app's own. I left the full recovered set in `res/` rather
-   than guessing which entries to delete — Android's build system lets a
-   module's own resources silently take precedence over a library's
-   same-named resources, so this shouldn't cause build failures, just some
-   bloat/duplication versus a hand-authored project.
+**Organize**
+- Collections — group places into lists like "Weekend Trip" or "Restaurants
+  to Try," browsable on their own
+- Set a Home and Work location for one-tap access from the map
+- Link a saved place to a phone contact ("my friend's house")
+- Search by name, address, or type, with distance-from-me and nearest-first
+  sorting
+- Multi-select batch actions — delete, export, or add several places to a
+  collection at once
 
-3. **I could not run an actual Gradle build to verify compilation.** My
-   sandbox doesn't have network access to Google's Maven repo or JitPack, so
-   this project has *not* been build-tested. Open it in Android Studio and
-   let it sync — you'll likely need to resolve small things like the exact
-   available versions of the AndroidX/Play Services libraries, or the AGP/
-   Gradle version compatibility with your local Android Studio.
+**Share & back up**
+- Share a Collection with another SFL user as a link or QR code
+- Export/import your full location list as a JSON file
+- Optional, off-by-default backup to your own Google Drive (App Data folder
+  — invisible in your regular Drive, readable only by this app)
 
-4. **⚠️ Exposed Google Maps API key.** The manifest contains a live-looking
-   Maps API key (`AIzaSyCmB9...`) that was hard-coded in the original APK.
-   Treat it as compromised — anyone can extract it the same way I just did.
-   Rotate/regenerate it in the Google Cloud Console and restrict the new key
-   (by package name + SHA-1 fingerprint) before using or redistributing this
-   project.
+**Everything else**
+- Light, dark, and system theme support
+- Undo on delete, so a stray tap never costs you data
 
-5. **Third-party library.** `MainActivity` uses `com.github.amlcurran:ShowcaseView`
-   for onboarding tooltips, pulled from JitPack — confirm the version/license
-   still suits your needs.
+## Privacy
 
-## Getting it running
-1. Open the project root in Android Studio (it'll offer to generate the
-   Gradle wrapper jar if missing — accept it, since I couldn't fetch the
-   wrapper binary in my sandbox).
-2. Let Gradle sync and resolve dependencies.
-3. Fix any resource-duplication or version warnings Android Studio surfaces.
-4. Rotate the Maps API key (see above) before running against real Maps
-   quota.
+SFL doesn't upload your saved locations anywhere or track you in the
+background unless you explicitly turn a feature on. Cloud backup is opt-in
+and off by default; sharing a collection is something you trigger yourself.
+Your data lives on your device unless you choose otherwise.
+
+## Tech stack
+
+- Java, Android SDK (minSdk 23, targetSdk 34)
+- Google Maps SDK for Android + Fused Location Provider
+- SQLite (local storage, no external database)
+- Material 3 components
+- Google Sign-In + Drive REST API (for the optional backup feature)
+- ZXing (QR code generation for shareable collections)
+
+## Building it yourself
+
+1. Clone the repo and open it in Android Studio.
+2. Copy `local.properties.sample` to `local.properties` and add your own
+   Google Maps API key (`MAPS_API_KEY=...`). Get one from the
+   [Google Cloud Console](https://console.cloud.google.com/) and restrict it
+   to this app's package name (`com.shivam.sfl`) and your signing
+   certificate's SHA-1 fingerprint.
+3. To use the optional Google Drive backup feature, you'll also need to
+   enable the Google Drive API and create an Android OAuth client ID in the
+   same Cloud Console project (package name + SHA-1, same as above). This
+   step is only required if you want that feature working — the rest of the
+   app functions without it.
+4. Let Gradle sync, then build and run.
+
+## License
+
+No license has been chosen for this project yet.
