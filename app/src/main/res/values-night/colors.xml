@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- colorPrimary/colorOnPrimary/colorSecondary/colorOnSecondary stay the same as
+         light mode on purpose - the amber toolbar/FAB/bottom-nav and teal accent are
+         fixed brand surfaces, not adaptive ones. Only the "container" roles (which sit
+         on top of the adaptive dark background/surface) need darker fills here so they
+         don't show up as a bright light-mode cutout against a dark screen. -->
+    <color name="colorPrimaryDark">#8f5a10</color>
+    <color name="colorPrimaryContainer">#5c3d12</color>
+    <color name="colorOnPrimaryContainer">#ffdba6</color>
+    <color name="colorSecondaryContainer">#00463d</color>
+    <color name="colorOnSecondaryContainer">#80cbc4</color>
+</resources>

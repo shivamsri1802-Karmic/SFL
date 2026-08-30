@@ -1,0 +1,9 @@
+[
+  { "featureType": "poi", "elementType": "labels", "stylers": [{ "visibility": "off" }] },
+  { "featureType": "poi.business", "stylers": [{ "visibility": "off" }] },
+  { "featureType": "poi.attraction", "elementType": "labels.icon", "stylers": [{ "visibility": "off" }] },
+  { "featureType": "transit", "elementType": "labels.icon", "stylers": [{ "visibility": "off" }] },
+  { "featureType": "road", "elementType": "labels.icon", "stylers": [{ "visibility": "off" }] },
+  { "featureType": "landscape", "elementType": "geometry", "stylers": [{ "color": "#f7f3ee" }] },
+  { "featureType": "water", "elementType": "geometry", "stylers": [{ "color": "#cfe8e3" }] }
+]

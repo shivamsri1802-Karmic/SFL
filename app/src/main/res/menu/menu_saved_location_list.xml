@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/sort_toggle"
+        android:title="Sort: Nearest"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/import_data"
+        android:title="Import Favorite Location"/>
+    <item
+        android:id="@+id/export_data"
+        android:title="Export Favorite Location"/>
+</menu>
