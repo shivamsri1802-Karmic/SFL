@@ -139,6 +139,14 @@
     <string name="path_password_strike_through">M3.27,4.27 L19.74,20.74</string>
     <string name="place_name_label">Place Name</string>
     <string name="save_the_location">Save the Location</string>
+    <string name="desc_scan_qr">Scan QR Code</string>
+    <string name="desc_qr_code_location">QR code for location</string>
+    <string name="share_qr_instruction">Scan this QR code with SFL or your camera app to save this location instantly.</string>
+    <string name="btn_share_qr_image">Share QR Image</string>
+    <string name="btn_share_text">Share Link / Text</string>
+    <string name="btn_copy_link">Copy Link</string>
+    <string name="search_location_hint">Search location…</string>
+    <string name="clear_search">Clear search</string>
     <string name="desc_save_current_location">Save current location</string>
     <string name="nav_explore">Explore</string>
     <string name="nav_saved">Saved</string>

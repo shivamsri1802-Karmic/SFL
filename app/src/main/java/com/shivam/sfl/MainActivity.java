@@ -10,24 +10,31 @@ import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import com.google.mlkit.vision.codescanner.GmsBarcodeScanner;
+import com.google.mlkit.vision.codescanner.GmsBarcodeScanning;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -85,6 +92,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     // recognize it's stale and avoid overwriting a newer one (see updateCapturedInfo).
     private int captureRequestId = 0;
 
+    // Search Views
+    private AutoCompleteTextView etSearchMap;
+    private ImageButton btnClearSearch;
+
     // Bottom Sheet Views
     private EditText etPlaceName;
     private AutoCompleteTextView etType;
@@ -108,6 +119,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         setupFab();
         setupBottomSheet();
         setupQuickAccess();
+        setupSearch();
 
         handleAutoCaptureIntent(getIntent());
     }
@@ -115,6 +127,108 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void setupQuickAccess() {
         findViewById(R.id.btn_go_home).setOnClickListener(v -> goToQuickSetLocation(QuickSetLocations.getHomeLocationId(this), "Home"));
         findViewById(R.id.btn_go_work).setOnClickListener(v -> goToQuickSetLocation(QuickSetLocations.getWorkLocationId(this), "Work"));
+    }
+
+    private void setupSearch() {
+        etSearchMap = findViewById(R.id.et_search_map);
+        btnClearSearch = findViewById(R.id.btn_clear_search);
+        ImageButton btnScanQr = findViewById(R.id.btn_scan_qr);
+
+        if (etSearchMap == null || btnClearSearch == null) return;
+
+        GeocoderAutoCompleteAdapter searchAdapter = new GeocoderAutoCompleteAdapter(this, mGeocoder);
+        etSearchMap.setAdapter(searchAdapter);
+
+        etSearchMap.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                btnClearSearch.setVisibility(s.length() > 0 ? View.VISIBLE : View.GONE);
+            }
+            @Override public void afterTextChanged(Editable s) {}
+        });
+
+        btnClearSearch.setOnClickListener(v -> {
+            etSearchMap.setText("");
+            btnClearSearch.setVisibility(View.GONE);
+        });
+
+        if (btnScanQr != null) {
+            btnScanQr.setOnClickListener(v -> startQrScanner());
+        }
+
+        etSearchMap.setOnItemClickListener((parent, view, position, id) -> {
+            String selectedAddress = searchAdapter.getItem(position);
+            if (selectedAddress != null) {
+                performMapSearch(selectedAddress);
+            }
+        });
+
+        etSearchMap.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                String query = etSearchMap.getText().toString().trim();
+                if (!query.isEmpty()) {
+                    performMapSearch(query);
+                }
+                return true;
+            }
+            return false;
+        });
+    }
+
+    private void startQrScanner() {
+        GmsBarcodeScanner scanner = GmsBarcodeScanning.getClient(this);
+        scanner.startScan()
+            .addOnSuccessListener(barcode -> {
+                String rawValue = barcode.getRawValue();
+                if (rawValue != null && rawValue.startsWith("sfl://")) {
+                    Uri uri = Uri.parse(rawValue);
+                    Intent intent = new Intent(this, ImportCollectionActivity.class);
+                    intent.setData(uri);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(this, "Scanned code is not a valid SFL QR code", Toast.LENGTH_LONG).show();
+                }
+            })
+            .addOnFailureListener(e -> {
+                Toast.makeText(this, "QR Scanner error: " + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+            });
+    }
+
+    private void performMapSearch(String query) {
+        Toast.makeText(this, "Searching for " + query + "...", Toast.LENGTH_SHORT).show();
+        AppExecutors.getInstance().runOnBackground(() -> {
+            try {
+                List<Address> addresses = mGeocoder.getFromLocationName(query, 1);
+                if (addresses != null && !addresses.isEmpty()) {
+                    Address location = addresses.get(0);
+                    double lat = location.getLatitude();
+                    double lng = location.getLongitude();
+
+                    AppExecutors.getInstance().runOnMainThread(() -> {
+                        isAdjusting = true;
+                        fabSaveLocation.hide();
+                        ivCenterPin.setVisibility(View.VISIBLE);
+
+                        if (mMap != null) {
+                            mMap.clear();
+                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 17f));
+                        }
+
+                        updateCapturedInfo(lat, lng);
+                        saveBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    });
+                } else {
+                    AppExecutors.getInstance().runOnMainThread(() -> 
+                        Toast.makeText(this, "No location found for: " + query, Toast.LENGTH_SHORT).show()
+                    );
+                }
+            } catch (IOException e) {
+                Log.e(TAG, "Search failed", e);
+                AppExecutors.getInstance().runOnMainThread(() -> 
+                    Toast.makeText(this, "Search failed. Check network connection.", Toast.LENGTH_SHORT).show()
+                );
+            }
+        });
     }
 
     private void goToQuickSetLocation(int locationId, String label) {

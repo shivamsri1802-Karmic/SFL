@@ -90,6 +90,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="sfl" android:host="collection" />
+                <data android:scheme="sfl" android:host="location" />
             </intent-filter>
         </activity>
 

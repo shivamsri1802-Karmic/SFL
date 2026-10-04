@@ -144,14 +144,7 @@ public class SavedLocationListAdapter extends RecyclerView.Adapter<SavedLocation
             v.getContext().startActivity(mapIntent);
         });
 
-        holder.share.setOnClickListener(v -> {
-            String shareBody = "Name: " + entity.getName() + "\nCoordinates: http://maps.google.com/maps?q=" + entity.getLat() + "," + entity.getLongt() + "\nAddress: " + entity.getAddress() + "\nType: " + entity.getType();
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.setType("text/plain");
-            intent.putExtra(Intent.EXTRA_SUBJECT, "Location Sharing");
-            intent.putExtra(Intent.EXTRA_TEXT, shareBody);
-            v.getContext().startActivity(Intent.createChooser(intent, "Share via"));
-        });
+        holder.share.setOnClickListener(v -> LocationShareHelper.showShareDialog(v.getContext(), entity));
 
         holder.edit.setOnClickListener(v -> {
             Intent mIntent = new Intent(v.getContext(), CompleteSaveLocation.class);
