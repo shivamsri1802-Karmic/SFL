@@ -66,6 +66,14 @@ public class LocationShareHelper {
             context.startActivity(Intent.createChooser(intent, "Share Location"));
         });
 
+        View btnWhatsapp = dialogView.findViewById(R.id.btn_share_whatsapp_unsaved);
+        if (btnWhatsapp != null) {
+            btnWhatsapp.setOnClickListener(v -> {
+                dialog.dismiss();
+                WhatsAppShareHelper.showWhatsAppShareDialog(context, location);
+            });
+        }
+
         dialogView.findViewById(R.id.btn_share_qr_image).setOnClickListener(v -> {
             if (qrBitmap != null) {
                 shareQrImage(context, qrBitmap, location.getName());

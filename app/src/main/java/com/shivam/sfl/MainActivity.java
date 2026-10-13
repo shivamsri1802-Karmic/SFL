@@ -542,6 +542,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
+        if (itemId == R.id.whatsapp_direct_share) {
+            WhatsAppShareHelper.showWhatsAppShareDialog(this, null);
+            return true;
+        }
         if (itemId == R.id.export_data) { LocationImportAndExport.exportLocation(this); return true; }
         if (itemId == R.id.import_data) { importLocation(); return true; }
         return super.onOptionsItemSelected(item);

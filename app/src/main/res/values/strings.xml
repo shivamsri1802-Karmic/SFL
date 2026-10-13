@@ -157,5 +157,12 @@
     <string name="status_bar_notification_info_overflow">999+</string>
     <string name="title">Title</string>
     <string name="title_activity_complete_save_location">Edit Location</string>
+    <string name="title_whatsapp_share">Share to WhatsApp (Unsaved #)</string>
+    <string name="desc_whatsapp_share">Enter a phone number with country code to open a WhatsApp chat directly without adding them as a contact.</string>
+    <string name="hint_whatsapp_number">Phone number (e.g. 14155552671)</string>
+    <string name="hint_select_location">Select location to share</string>
+    <string name="btn_send_on_whatsapp">Send on WhatsApp</string>
+    <string name="btn_share_whatsapp_unsaved">WhatsApp Direct (Unsaved #)</string>
+    <string name="title_whatsapp_direct_menu">WhatsApp Direct (Unsaved #)</string>
     <string name="type">Type</string>
 </resources>

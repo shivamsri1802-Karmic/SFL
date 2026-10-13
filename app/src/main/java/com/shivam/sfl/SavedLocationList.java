@@ -335,7 +335,10 @@ public class SavedLocationList extends AppCompatActivity {
     @Override // android.app.Activity
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
-        if (itemId == R.id.export_data) {
+        if (itemId == R.id.whatsapp_direct_share) {
+            WhatsAppShareHelper.showWhatsAppShareDialog(this, null);
+            return true;
+        } else if (itemId == R.id.export_data) {
             LocationImportAndExport.exportLocation(this);
             return true;
         } else if (itemId == R.id.import_data) {
