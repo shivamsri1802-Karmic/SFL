@@ -80,7 +80,6 @@ public class WhatsAppShareHelper {
 
     private static void sendWhatsAppMessage(Context context, String cleanedPhone, SavedLocationEntity loc) {
         try {
-            String link = LocationShareLink.buildLink(loc);
             StringBuilder sb = new StringBuilder();
             sb.append("📍 *").append(loc.getName()).append("*\n");
             if (loc.getAddress() != null && !loc.getAddress().isEmpty()) {
@@ -88,13 +87,10 @@ public class WhatsAppShareHelper {
             }
             sb.append("Google Maps: http://maps.google.com/maps?q=").append(loc.getLat()).append(",").append(loc.getLongt()).append("\n");
             if (loc.getPlusCode() != null && !loc.getPlusCode().isEmpty()) {
-                sb.append("Plus Code: ").append(loc.getPlusCode()).append("\n");
-            }
-            if (link != null) {
-                sb.append("Open in SFL: ").append(link);
+                sb.append("Plus Code: ").append(loc.getPlusCode());
             }
 
-            String encodedMsg = URLEncoder.encode(sb.toString(), StandardCharsets.UTF_8.name());
+            String encodedMsg = URLEncoder.encode(sb.toString().trim(), StandardCharsets.UTF_8.name());
             String whatsappUrl = "https://api.whatsapp.com/send?phone=" + cleanedPhone + "&text=" + encodedMsg;
 
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(whatsappUrl));
